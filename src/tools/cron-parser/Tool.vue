@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import CopyButton from '../../components/CopyButton.vue'
 import Field from '../../components/Field.vue'
 import Select from '../../components/Select.vue'
+import TwoPane from '../../components/TwoPane.vue'
 import { CRON_PRESETS, describeCron, formatRun, MAX_RUNS, nextRuns } from './logic'
 
 const expression = ref('*/15 * * * *')
