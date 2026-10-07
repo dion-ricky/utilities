@@ -1,0 +1,124 @@
+:root {
+  color-scheme: light dark;
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #eef0f4;
+  --border: #e2e5ea;
+  --fg: #1a1d23;
+  --muted: #667085;
+  --accent: #d52b1e;
+  --accent-fg: #ffffff;
+  --radius: 10px;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+[data-theme="dark"] {
+  --bg: #0f1115;
+  --surface: #171a21;
+  --surface-2: #1f242e;
+  --border: #262b36;
+  --fg: #e6e8ee;
+  --muted: #8b93a7;
+  --accent: #e5484d;
+  --accent-fg: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+a {
+  color: var(--accent);
+}
+
+kbd {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--surface-2);
+  color: var(--muted);
+}
+
+/* Shared form primitives used by tools */
+.input,
+.textarea,
+.select {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  font: inherit;
+}
+
+.textarea {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 180px;
+  resize: vertical;
+}
+
+.input:focus-visible,
+.textarea:focus-visible,
+.select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Shared button primitive */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--fg);
+  border-radius: var(--radius);
+  padding: 8px 14px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: var(--surface-2);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A swiss army knife of developer tools. 100% client-side — nothing you paste ever leaves your browser." />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f7f9" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1115" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Dev Swiss Army Knife</title>
+    <script>
+      // Set theme before first paint to avoid a flash of the wrong theme.
+      ;(() => {
+        try {
+          let t = localStorage.getItem('dsk.theme')
+          if (t !== 'light' && t !== 'dark') {
+            t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+          }
+          document.documentElement.dataset.theme = t
+        } catch {
+          document.documentElement.dataset.theme = 'light'
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
