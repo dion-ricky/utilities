@@ -33,7 +33,8 @@
             "noUnusedVariables": "off"
           },
           "style": {
-            "useVueMultiWordComponentNames": "off"
+            "useVueMultiWordComponentNames": "off",
+            "useImportType": "off"
           }
         }
       }

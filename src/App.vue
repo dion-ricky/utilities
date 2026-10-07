@@ -4,7 +4,7 @@ import { useTheme } from './composables/useTheme'
 import { useRoute } from './router'
 import AppFooter from './shell/AppFooter.vue'
 import AppHeader from './shell/AppHeader.vue'
-import type CommandPalette from './shell/CommandPalette.vue'
+import CommandPalette from './shell/CommandPalette.vue'
 import HomeView from './shell/HomeView.vue'
 import ToolView from './shell/ToolView.vue'
 
