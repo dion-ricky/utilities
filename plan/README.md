@@ -41,7 +41,7 @@ See `00-foundation.md` for architecture, repo layout, and CI.
 ## Progress
 
 - [x] Stage 0 — Foundation
-- [ ] Stage 1 — MVP (20 tools)
+- [x] Stage 1 — MVP (20 tools)
 - [ ] Stage 2 — Converters & formatters (20)
 - [ ] Stage 3 — Crypto & security (13)
 - [ ] Stage 4 — Generators & text (19)

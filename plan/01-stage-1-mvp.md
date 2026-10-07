@@ -29,8 +29,8 @@ Ship the 20 tools developers hit daily. This is the "useful on day one" release.
 
 ## Acceptance criteria
 
-- [ ] All 20 tools live at `#/<slug>` and discoverable via ⌘K.
-- [ ] Every tool: unit tests for `logic.ts`, copy button, mobile-stacked layout.
-- [ ] `pnpm build` total < ~300 KB gzip on home route (tool chunks lazy).
+- [x] All 20 tools live at `#/<slug>` and discoverable via ⌘K.
+- [x] Every tool: unit tests for `logic.ts`, copy button, mobile-stacked layout.
+- [x] `pnpm build` total < ~300 KB gzip on home route (tool chunks lazy).
 - [ ] Deployed and verified on GitHub Pages.
-- [ ] README lists all 20 tools with descriptions.
+- [x] README lists all 20 tools with descriptions.
