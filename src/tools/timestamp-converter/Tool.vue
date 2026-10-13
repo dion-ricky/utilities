@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import CopyButton from '../../components/CopyButton.vue'
 import Field from '../../components/Field.vue'
 import TwoPane from '../../components/TwoPane.vue'
@@ -12,14 +12,24 @@ const localDateTime = ref('')
 const epoch = computed(() => parseEpoch(epochInput.value))
 const epochInvalid = computed(() => epochInput.value.trim() !== '' && !epoch.value)
 
-const isoUtc = computed(() => (epoch.value ? epochToIso(epoch.value.millis) : ''))
-const localFormatted = computed(() => (epoch.value ? epochToLocal(epoch.value.millis) : ''))
+const isoUtc = computed(() =>
+  epoch.value ? epochToIso(epoch.value.millis, epoch.value.micros % 1000) : '',
+)
+const localFormatted = computed(() =>
+  epoch.value ? epochToLocal(epoch.value.millis, epoch.value.micros % 1000) : '',
+)
 const relative = computed(() => (epoch.value ? relativeTime(epoch.value.millis, now.value) : ''))
 
 const localParsed = computed(() =>
   localDateTime.value ? localDateToEpoch(localDateTime.value) : null,
 )
 const localInvalid = computed(() => localDateTime.value !== '' && localParsed.value === null)
+
+// Mirror a valid local date & time back into the epoch input (in milliseconds).
+watch(localDateTime, (value) => {
+  const parsed = value ? localDateToEpoch(value) : null
+  if (parsed) epochInput.value = String(parsed.millis)
+})
 
 function fillNow() {
   now.value = Date.now()
@@ -30,7 +40,7 @@ function fillNow() {
 <template>
   <TwoPane input-label="Epoch timestamp" output-label="Conversions">
     <template #input>
-      <Field label="Epoch (seconds or milliseconds)" hint="auto-detected by magnitude, digits only">
+      <Field label="Epoch (s, ms, or µs)" hint="auto-detected by magnitude, digits only">
         <input
           v-model="epochInput"
           class="input"
@@ -41,7 +51,7 @@ function fillNow() {
       </Field>
       <button type="button" class="btn" @click="fillNow">Now</button>
       <p v-if="epochInvalid" class="hint-error">
-        Not a valid epoch — enter digits only (seconds or milliseconds).
+        Not a valid epoch — enter digits only (seconds, milliseconds, or microseconds).
       </p>
       <Field
         label="Local date & time"
@@ -81,30 +91,21 @@ function fillNow() {
           <div class="result-col">
             <span class="result-label">Epoch</span>
             <code class="result-value">
-              {{ epoch.seconds }} s · {{ epoch.millis }} ms
+              {{ epoch.seconds }} s · {{ epoch.millis }} ms · {{ epoch.micros }} µs
             </code>
           </div>
           <CopyButton :value="String(epoch.seconds)" label="Copy s" />
           <CopyButton :value="String(epoch.millis)" label="Copy ms" />
+          <CopyButton :value="String(epoch.micros)" label="Copy µs" />
         </div>
       </template>
       <p v-else class="tool-meta">Enter an epoch above to see conversions.</p>
 
-      <template v-if="localParsed">
-        <div class="divider" />
-        <div class="result-row">
-          <div class="result-col">
-            <span class="result-label">Epoch from local time</span>
-            <code class="result-value">
-              {{ localParsed.seconds }} s · {{ localParsed.millis }} ms
-            </code>
-          </div>
-          <CopyButton :value="String(localParsed.seconds)" label="Copy s" />
-          <CopyButton :value="String(localParsed.millis)" label="Copy ms" />
-        </div>
-      </template>
-      <p v-else-if="!localDateTime" class="tool-meta">
-        Pick a local date &amp; time to get its epoch.
+      <p v-if="localInvalid" class="hint-error" style="margin-top: 8px">
+        Invalid local date &amp; time — pick a real calendar date and time.
+      </p>
+      <p v-else-if="!localDateTime" class="tool-meta" style="margin-top: 8px">
+        Pick a local date &amp; time above to set the epoch.
       </p>
     </template>
   </TwoPane>
@@ -156,9 +157,5 @@ function fillNow() {
   font-family: var(--font-mono);
   font-size: 13px;
   word-break: break-all;
-}
-
-.divider {
-  height: 8px;
 }
 </style>

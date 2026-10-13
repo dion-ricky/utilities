@@ -15,24 +15,60 @@ describe('parseEpoch', () => {
   })
 
   it('treats small magnitudes as seconds', () => {
-    expect(parseEpoch('0')).toEqual({ seconds: 0, millis: 0 })
-    expect(parseEpoch('1700000000')).toEqual({ seconds: 1700000000, millis: 1700000000000 })
+    expect(parseEpoch('0')).toEqual({ seconds: 0, millis: 0, micros: 0 })
+    expect(parseEpoch('1700000000')).toEqual({
+      seconds: 1700000000,
+      millis: 1700000000000,
+      micros: 1700000000000000,
+    })
   })
 
   it('treats large magnitudes as milliseconds', () => {
     expect(parseEpoch('1700000000000')).toEqual({
       seconds: 1700000000,
       millis: 1700000000000,
+      micros: 1700000000000000,
     })
   })
 
-  it('uses the 1e11 boundary', () => {
-    expect(parseEpoch('99999999999')).toEqual({ seconds: 99999999999, millis: 99999999999000 })
-    expect(parseEpoch('100000000000')).toEqual({ seconds: 100000000, millis: 100000000000 })
+  it('treats very large magnitudes as microseconds', () => {
+    expect(parseEpoch('1700000000000123')).toEqual({
+      seconds: 1700000000,
+      millis: 1700000000000,
+      micros: 1700000000000123,
+    })
+    expect(parseEpoch('100000000000001')).toEqual({
+      seconds: 100000000,
+      millis: 100000000000,
+      micros: 100000000000001,
+    })
+  })
+
+  it('uses the 1e11 and 1e14 boundaries', () => {
+    expect(parseEpoch('99999999999')).toEqual({
+      seconds: 99999999999,
+      millis: 99999999999000,
+      micros: 99999999999000000,
+    })
+    expect(parseEpoch('100000000000')).toEqual({
+      seconds: 100000000,
+      millis: 100000000000,
+      micros: 100000000000000,
+    })
+    expect(parseEpoch('99999999999999')).toEqual({
+      seconds: 99999999999,
+      millis: 99999999999999,
+      micros: 99999999999999000,
+    })
+    expect(parseEpoch('100000000000000')).toEqual({
+      seconds: 100000000,
+      millis: 100000000000,
+      micros: 100000000000000,
+    })
   })
 
   it('tolerates surrounding whitespace', () => {
-    expect(parseEpoch(' 42 ')).toEqual({ seconds: 42, millis: 42000 })
+    expect(parseEpoch(' 42 ')).toEqual({ seconds: 42, millis: 42000, micros: 42000000 })
   })
 })
 
@@ -48,6 +84,15 @@ describe('epochToIso', () => {
   it('handles negative epochs', () => {
     expect(epochToIso(-1000)).toBe('1969-12-31T23:59:59.000Z')
   })
+
+  it('appends sub-millisecond micros as a 6-digit fraction when present', () => {
+    expect(epochToIso(1700000000000, 123)).toBe('2023-11-14T22:13:20.000123Z')
+    expect(epochToIso(1700000000999, 999)).toBe('2023-11-14T22:13:20.999999Z')
+  })
+
+  it('keeps the standard 3-digit fraction when sub-ms micros is zero', () => {
+    expect(epochToIso(1700000000000, 0)).toBe('2023-11-14T22:13:20.000Z')
+  })
 })
 
 describe('epochToLocal', () => {
@@ -58,6 +103,12 @@ describe('epochToLocal', () => {
 
   it('marks invalid dates as invalid', () => {
     expect(epochToLocal(Number.NaN)).toBe('Invalid date')
+  })
+
+  it('appends sub-millisecond micros as a 6-digit fraction when present', () => {
+    expect(epochToLocal(1700000000000, 123456)).toMatch(
+      /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{6}$/,
+    )
   })
 })
 
@@ -129,6 +180,7 @@ describe('localDateToEpoch', () => {
     expect(date.getHours()).toBe(22)
     expect(date.getMinutes()).toBe(13)
     expect(parts.millis % 1000).toBe(0)
+    expect(parts.micros).toBe(parts.millis * 1000)
   })
 
   it('handles leap days', () => {

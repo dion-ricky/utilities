@@ -3,7 +3,6 @@ import { caseConverter } from './case-converter'
 import { chmodCalculator } from './chmod-calculator'
 import { colorConverter } from './color-converter'
 import { cronParser } from './cron-parser'
-import { demoEcho } from './demo-echo'
 import { hashText } from './hash-text'
 import { htmlEntities } from './html-entities'
 import { jsonCsv } from './json-csv'
@@ -47,7 +46,6 @@ export const tools: ToolMeta[] = [
   caseConverter,
   cronParser,
   chmodCalculator,
-  demoEcho,
 ]
 
 export interface ToolGroup {

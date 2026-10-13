@@ -27,13 +27,13 @@ describe('tool registry', () => {
   })
 
   it('finds tools by slug', () => {
-    expect(getTool('demo-echo')?.slug).toBe('demo-echo')
+    expect(getTool('base64-text')?.slug).toBe('base64-text')
     expect(getTool('does-not-exist')).toBeUndefined()
   })
 
   it('searches by name, slug and keywords', () => {
-    const results = searchTools('echo')
-    expect(results.map((tool) => tool.slug)).toContain('demo-echo')
+    const results = searchTools('uuid')
+    expect(results.map((tool) => tool.slug)).toContain('uuid-generator')
     expect(searchTools('zzz-no-match-zzz')).toHaveLength(0)
   })
 })

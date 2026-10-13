@@ -1,15 +1,18 @@
-/** Epoch input below this magnitude is treated as seconds, above as milliseconds. */
-const MS_THRESHOLD = 1e11
+/** Epoch input below these magnitudes is treated as seconds / milliseconds / microseconds. */
+const SECONDS_THRESHOLD = 1e11
+const MILLIS_THRESHOLD = 1e14
 
 const EPOCH_PATTERN = /^\d+$/
 
 export interface EpochParts {
   seconds: number
   millis: number
+  micros: number
 }
 
 /**
- * Parse a digits-only epoch value, auto-detecting seconds vs milliseconds by magnitude.
+ * Parse a digits-only epoch value, auto-detecting seconds vs milliseconds vs
+ * microseconds by magnitude (< 1e11 → s, < 1e14 → ms, otherwise → µs).
  * Returns null for empty or non-numeric input. Never uses Date.parse.
  */
 export function parseEpoch(input: string): EpochParts | null {
@@ -17,24 +20,37 @@ export function parseEpoch(input: string): EpochParts | null {
   if (!EPOCH_PATTERN.test(trimmed)) return null
   const value = Number(trimmed)
   if (!Number.isFinite(value)) return null
-  const millis = value < MS_THRESHOLD ? value * 1000 : value
-  return { seconds: Math.floor(millis / 1000), millis }
+  let micros: number
+  if (value < SECONDS_THRESHOLD) micros = value * 1e6
+  else if (value < MILLIS_THRESHOLD) micros = value * 1e3
+  else micros = value
+  const millis = Math.floor(micros / 1e3)
+  return { seconds: Math.floor(millis / 1000), millis, micros }
 }
 
-/** Format an epoch in milliseconds as an ISO 8601 UTC string. */
-export function epochToIso(ms: number): string {
-  return new Date(ms).toISOString()
+/**
+ * Format an epoch in milliseconds as an ISO 8601 UTC string. `subMsMicros`
+ * (0–999) is the sub-millisecond remainder; when non-zero it is appended as a
+ * 6-digit fractional-seconds component.
+ */
+export function epochToIso(ms: number, subMsMicros = 0): string {
+  const base = new Date(ms).toISOString()
+  if (!subMsMicros) return base
+  const micros = (((ms % 1000) + 1000) % 1000) * 1000 + subMsMicros
+  return `${base.slice(0, base.length - 5)}.${String(micros).padStart(6, '0')}Z`
 }
 
 /** Format an epoch in milliseconds using the browser's local timezone. */
-export function epochToLocal(ms: number): string {
+export function epochToLocal(ms: number, subMsMicros = 0): string {
   const date = new Date(ms)
   if (Number.isNaN(date.getTime())) return 'Invalid date'
   const pad = (n: number) => String(n).padStart(2, '0')
-  return (
+  const base =
     `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
     `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
-  )
+  if (!subMsMicros) return base
+  const micros = (((ms % 1000) + 1000) % 1000) * 1000 + subMsMicros
+  return `${base}.${String(micros).padStart(6, '0')}`
 }
 
 /** Format the difference between `ms` and `now` (default: now) as a relative string. */
@@ -92,5 +108,5 @@ export function localDateToEpoch(value: string): EpochParts | null {
     return null
   }
   const millis = date.getTime()
-  return { seconds: Math.floor(millis / 1000), millis }
+  return { seconds: Math.floor(millis / 1000), millis, micros: millis * 1000 }
 }
