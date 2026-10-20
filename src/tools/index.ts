@@ -6,6 +6,7 @@ import { cronParser } from './cron-parser'
 import { hashText } from './hash-text'
 import { htmlEntities } from './html-entities'
 import { jsonCsv } from './json-csv'
+import { jsonEscape } from './json-escape'
 import { jsonFormatter } from './json-formatter'
 import { jsonYaml } from './json-yaml'
 import { jwtDecoder } from './jwt-decoder'
@@ -34,6 +35,7 @@ export const tools: ToolMeta[] = [
   jsonFormatter,
   jsonYaml,
   jsonCsv,
+  jsonEscape,
   sqlFormatter,
   textDiff,
   uuidGenerator,
