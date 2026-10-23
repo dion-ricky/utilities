@@ -10,6 +10,7 @@ import { jsonEscape } from './json-escape'
 import { jsonFormatter } from './json-formatter'
 import { jsonYaml } from './json-yaml'
 import { jwtDecoder } from './jwt-decoder'
+import { kanbanBoard } from './kanban-board'
 import { loremIpsum } from './lorem-ipsum'
 import { passwordGenerator } from './password-generator'
 import { qrGenerator } from './qr-generator'
@@ -49,6 +50,7 @@ export const tools: ToolMeta[] = [
   caseConverter,
   cronParser,
   chmodCalculator,
+  kanbanBoard,
   todoList,
 ]
 

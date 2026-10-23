@@ -37,10 +37,17 @@ describe('tool registry', () => {
     expect(group?.tools.map((tool) => tool.slug)).toContain('todo-list')
   })
 
+  it('registers the kanban board under productivity', () => {
+    expect(getTool('kanban-board')?.category).toBe('productivity')
+    const group = toolsByCategory.find((entry) => entry.category === 'productivity')
+    expect(group?.tools.map((tool) => tool.slug)).toContain('kanban-board')
+  })
+
   it('searches by name, slug and keywords', () => {
     const results = searchTools('uuid')
     expect(results.map((tool) => tool.slug)).toContain('uuid-generator')
     expect(searchTools('todo').map((tool) => tool.slug)).toContain('todo-list')
+    expect(searchTools('kanban').map((tool) => tool.slug)).toContain('kanban-board')
     expect(searchTools('zzz-no-match-zzz')).toHaveLength(0)
   })
 })
