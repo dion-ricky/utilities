@@ -4,3 +4,5 @@ coverage/
 *.local
 *.tsbuildinfo
 .DS_Store
+.loop/
+.pba/
