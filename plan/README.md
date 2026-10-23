@@ -28,7 +28,7 @@ See `00-foundation.md` for architecture, repo layout, and CI.
 |---|---|---|---|
 | 0 | [00-foundation.md](00-foundation.md) | Shell, registry, search, CI, deploy | — |
 | 1 | [01-stage-1-mvp.md](01-stage-1-mvp.md) | MVP — the 20 daily-driver tools | 20 |
-| 2 | [02-stage-2-converters-formatters.md](02-stage-2-converters-formatters.md) | Encoders, converters, formatters | 20 |
+| 2 | [02-stage-2-converters-formatters.md](02-stage-2-converters-formatters.md) | Encoders, converters, formatters | 11 |
 | 3 | [03-stage-3-crypto-security.md](03-stage-3-crypto-security.md) | Crypto & security suite | 13 |
 | 4 | [04-stage-4-generators-text.md](04-stage-4-generators-text.md) | Generators & text utilities | 19 |
 | 5 | [05-stage-5-web-network-datetime.md](05-stage-5-web-network-datetime.md) | Web/HTTP, network, date & time | 19 |
@@ -36,7 +36,7 @@ See `00-foundation.md` for architecture, repo layout, and CI.
 | 7 | [07-stage-7-images-files.md](07-stage-7-images-files.md) | Images & files (Canvas/WASM) | 7 |
 | 8 | [08-stage-8-calculators-reference.md](08-stage-8-calculators-reference.md) | Calculators, reference, PWA polish | 9 |
 
-**Total: 120 tools** across 8 stages after the foundation.
+**Total: 111 tools** across 8 stages after the foundation.
 
 ## Progress
 
