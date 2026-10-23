@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronLeft, ChevronRight, GripVertical, Trash2 } from '@lucide/vue'
+import { GripVertical, Trash2 } from '@lucide/vue'
 import { computed, ref } from 'vue'
 import { useLocalStorage } from '../../composables/useLocalStorage'
 import {
@@ -100,10 +100,10 @@ function resetDrag() {
   dropTarget.value = null
 }
 
-/** Start a drag from the handle only, so text selection keeps working. */
-function onHandleDragStart(event: DragEvent, task: KanbanTask) {
-  const card = (event.currentTarget as HTMLElement).closest('li')
-  if (card) event.dataTransfer?.setDragImage(card, 16, 16)
+/** Start a drag from anywhere on the card. */
+function onCardDragStart(event: DragEvent, task: KanbanTask) {
+  const card = event.currentTarget as HTMLElement
+  event.dataTransfer?.setDragImage(card, 16, 16)
   event.dataTransfer?.setData('text/plain', task.id)
   if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move'
   dragId.value = task.id
@@ -195,6 +195,9 @@ function onDrop(event: DragEvent, status: KanbanStatus) {
             :key="task.id"
             class="kanban-card"
             :data-task-id="task.id"
+            draggable="true"
+            tabindex="0"
+            title="Drag to reorder or move. Arrow Up / Arrow Down reorder, Arrow Left / Arrow Right change column"
             :class="{
               dragging: dragId === task.id,
               'drop-before': dropTarget?.status === column.status && dropTarget.beforeId === task.id,
@@ -203,46 +206,20 @@ function onDrop(event: DragEvent, status: KanbanStatus) {
                 dropTarget.beforeId === null &&
                 index === grouped[column.status].length - 1,
             }"
+            @dragstart="onCardDragStart($event, task)"
+            @dragend="resetDrag"
             @dragover.stop="onCardDragOver($event, task)"
             @drop.stop="onDrop($event, task.status)"
+            @keydown.up.prevent="keyboardMove(task, 'up')"
+            @keydown.down.prevent="keyboardMove(task, 'down')"
+            @keydown.left.prevent="keyboardMove(task, 'left')"
+            @keydown.right.prevent="keyboardMove(task, 'right')"
           >
-            <button
-              type="button"
-              class="kanban-handle"
-              draggable="true"
-              aria-label="Reorder or move task"
-              title="Drag to reorder or move, or press Arrow Up / Arrow Down to reorder and Arrow Left / Arrow Right to change column"
-              @dragstart="onHandleDragStart($event, task)"
-              @dragend="resetDrag"
-              @keydown.up.prevent="keyboardMove(task, 'up')"
-              @keydown.down.prevent="keyboardMove(task, 'down')"
-              @keydown.left.prevent="keyboardMove(task, 'left')"
-              @keydown.right.prevent="keyboardMove(task, 'right')"
-            >
-              <GripVertical :size="16" aria-hidden="true" />
-            </button>
+            <span class="kanban-grip" aria-hidden="true"><GripVertical :size="16" /></span>
 
             <span class="kanban-text">{{ task.text }}</span>
 
             <div class="kanban-actions">
-              <button
-                type="button"
-                class="btn kanban-action"
-                :disabled="column.status === 'todo'"
-                aria-label="Move to previous column"
-                @click="moveToColumn(task, -1)"
-              >
-                <ChevronLeft :size="14" aria-hidden="true" />
-              </button>
-              <button
-                type="button"
-                class="btn kanban-action"
-                :disabled="column.status === 'done'"
-                aria-label="Move to next column"
-                @click="moveToColumn(task, 1)"
-              >
-                <ChevronRight :size="14" aria-hidden="true" />
-              </button>
               <button
                 type="button"
                 class="btn kanban-action"
@@ -343,10 +320,12 @@ function onDrop(event: DragEvent, status: KanbanStatus) {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
+  cursor: grab;
 }
 
 .kanban-card.dragging {
   opacity: 0.5;
+  cursor: grabbing;
 }
 
 .kanban-card.drop-before {
@@ -357,30 +336,18 @@ function onDrop(event: DragEvent, status: KanbanStatus) {
   box-shadow: inset 0 -2px 0 var(--accent);
 }
 
-.kanban-handle {
+.kanban-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.kanban-grip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 4px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
   color: var(--muted);
-  cursor: grab;
-}
-
-.kanban-handle:hover {
-  color: var(--fg);
-  background: var(--surface-2);
-}
-
-.kanban-handle:active {
-  cursor: grabbing;
-}
-
-.kanban-handle:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
+  flex: none;
 }
 
 .kanban-text {
