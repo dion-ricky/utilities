@@ -1,13 +1,16 @@
 import { describe, expect, it } from 'vitest'
 import {
   addTodo,
+  COMPLETED_OPEN_STORAGE_KEY,
   clearCompleted,
   countTodos,
   createTodo,
   filterTodos,
   normalizeTodos,
   removeTodo,
+  reorderTodos,
   STORAGE_KEY,
+  splitTodos,
   type TodoItem,
   toggleTodo,
   updateTodoText,
@@ -161,6 +164,80 @@ describe('filterTodos', () => {
     filterTodos(items, 'completed')
     filterTodos(items, 'all')
     expect(items).toEqual(before)
+  })
+})
+
+describe('COMPLETED_OPEN_STORAGE_KEY', () => {
+  it('uses the dsk namespace', () => {
+    expect(COMPLETED_OPEN_STORAGE_KEY).toBe('dsk.todos.completedOpen')
+  })
+})
+
+describe('splitTodos', () => {
+  it('partitions by completion while preserving relative order', () => {
+    const first = item('a', 'Alpha')
+    const doneFirst = item('b', 'Beta', true, 2)
+    const second = item('c', 'Gamma')
+    const doneSecond = item('d', 'Delta', true, 3)
+
+    const sections = splitTodos([first, doneFirst, second, doneSecond])
+
+    expect(sections.active).toEqual([first, second])
+    expect(sections.completed).toEqual([doneFirst, doneSecond])
+  })
+
+  it('returns empty parts for an empty input', () => {
+    expect(splitTodos([])).toEqual({ active: [], completed: [] })
+  })
+
+  it('never mutates the input and returns new arrays', () => {
+    const original = [alpha, gamma, beta]
+    const before = snapshot(original)
+    const sections = splitTodos(original)
+
+    expect(original).toEqual(before)
+    expect(sections.active).not.toBe(original)
+    expect(sections.completed).not.toBe(original)
+  })
+})
+
+describe('reorderTodos', () => {
+  it('moves an item down', () => {
+    const next = reorderTodos([alpha, beta, gamma], 'a', 'b', 'after')
+    expect(next.map((todo) => todo.id)).toEqual(['b', 'a', 'c'])
+  })
+
+  it('moves an item up', () => {
+    const next = reorderTodos([alpha, beta, gamma], 'c', 'a', 'before')
+    expect(next.map((todo) => todo.id)).toEqual(['c', 'a', 'b'])
+  })
+
+  it('inserts after the last item', () => {
+    const next = reorderTodos([alpha, beta, gamma], 'a', 'c', 'after')
+    expect(next.map((todo) => todo.id)).toEqual(['b', 'c', 'a'])
+  })
+
+  it('keeps each section order when moving across an interleaved completed item', () => {
+    const done = item('b', 'Beta', true, 2)
+    const next = reorderTodos([alpha, done, gamma], 'c', 'a', 'before')
+
+    expect(next.map((todo) => todo.id)).toEqual(['c', 'a', 'b'])
+    expect(next.find((todo) => todo.id === 'b')?.done).toBe(true)
+  })
+
+  it('returns the same reference for no-op moves', () => {
+    const original = [alpha, beta, gamma]
+    expect(reorderTodos(original, 'a', 'a', 'before')).toBe(original)
+    expect(reorderTodos(original, 'missing', 'b', 'before')).toBe(original)
+    expect(reorderTodos(original, 'a', 'missing', 'before')).toBe(original)
+    expect(reorderTodos(original, 'a', 'b', 'before')).toBe(original)
+  })
+
+  it('never mutates the input', () => {
+    const original = [alpha, beta, gamma]
+    const before = snapshot(original)
+    reorderTodos(original, 'c', 'a', 'before')
+    expect(original).toEqual(before)
   })
 })
 
