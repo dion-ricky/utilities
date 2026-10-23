@@ -17,6 +17,7 @@ import { regexTester } from './regex-tester'
 import { sqlFormatter } from './sql-formatter'
 import { textDiff } from './text-diff'
 import { timestampConverter } from './timestamp-converter'
+import { todoList } from './todo-list'
 import type { Category, ToolMeta } from './types'
 import { CATEGORIES, CATEGORY_LABELS } from './types'
 import { urlEncoder } from './url-encoder'
@@ -48,6 +49,7 @@ export const tools: ToolMeta[] = [
   caseConverter,
   cronParser,
   chmodCalculator,
+  todoList,
 ]
 
 export interface ToolGroup {

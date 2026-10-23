@@ -57,6 +57,9 @@ Built with Vite + TypeScript + Vue 3. Deployed to GitHub Pages:
 ### Calculators
 - **Chmod Calculator** (`#/chmod-calculator`) — rwx grid ⇄ octal ⇄ symbolic, special bits
 
+### Productivity
+- **Todo List** (`#/todo-list`) — add, edit, complete and filter tasks; saved in this browser
+
 ## Development
 
 ```sh

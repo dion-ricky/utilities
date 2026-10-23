@@ -31,9 +31,16 @@ describe('tool registry', () => {
     expect(getTool('does-not-exist')).toBeUndefined()
   })
 
+  it('registers the todo list under productivity', () => {
+    expect(getTool('todo-list')?.category).toBe('productivity')
+    const group = toolsByCategory.find((entry) => entry.category === 'productivity')
+    expect(group?.tools.map((tool) => tool.slug)).toContain('todo-list')
+  })
+
   it('searches by name, slug and keywords', () => {
     const results = searchTools('uuid')
     expect(results.map((tool) => tool.slug)).toContain('uuid-generator')
+    expect(searchTools('todo').map((tool) => tool.slug)).toContain('todo-list')
     expect(searchTools('zzz-no-match-zzz')).toHaveLength(0)
   })
 })
