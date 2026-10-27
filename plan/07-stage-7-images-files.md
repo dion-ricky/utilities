@@ -14,6 +14,7 @@ lazy-loaded libraries. Show progress bars for heavy ops.
 | 5 | Palette from image | `palette-from-image` | canvas + median-cut quantization; export HEX list |
 | 6 | PDF organizer | `pdf-organizer` | `pdf-lib`: merge, split, rotate, delete pages, page numbers |
 | 7 | OCR (image → text) | `ocr-text` | `tesseract.js` (WASM); model lazy-download with progress; cached for offline |
+| 8 | Image annotator | `image-annotator` | canvas: crop, highlight, text, freehand; export PNG/JPEG/WebP |
 
 ## Acceptance criteria
 

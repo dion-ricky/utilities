@@ -5,6 +5,7 @@ import { colorConverter } from './color-converter'
 import { cronParser } from './cron-parser'
 import { hashText } from './hash-text'
 import { htmlEntities } from './html-entities'
+import { imageAnnotator } from './image-annotator'
 import { jsonCsv } from './json-csv'
 import { jsonEscape } from './json-escape'
 import { jsonFormatter } from './json-formatter'
@@ -52,6 +53,7 @@ export const tools: ToolMeta[] = [
   chmodCalculator,
   kanbanBoard,
   todoList,
+  imageAnnotator,
 ]
 
 export interface ToolGroup {
